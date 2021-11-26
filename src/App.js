@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import HomePage from "./app/HomePage";
+import {Route, useLocation} from "react-router-dom";
+import NavBar from "./app/common/NavBar";
+import {Container} from "semantic-ui-react";
+import EmployeeTable from "./features/employess/EmployeeTable";
+import ModalManager from "./app/common/modal/ModalManager";
+import EmployeeDetail from "./features/employess/employeeDetails/EmployeeDetail";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+const App = () => {
+    const {key} = useLocation();
+    return (
+
+
+        <>
+            <ModalManager/>
+            <Route exact path={'/'} component={HomePage}/>
+            <Route path={'/(.+)'} render={() => (
+                <>
+                    <NavBar/>
+                    <Container className={'main'}>
+                        <Route exact path={'/employees'} component={EmployeeTable}/>
+                        <Route path={'/detail/:id'} component={EmployeeDetail}/>
+
+                    </Container>
+
+
+                </>
+
+            )}>
+
+            </Route>
+
+        </>
+    );
+};
 
 export default App;
