@@ -20,13 +20,13 @@ const LogInForm = () => {
                     email: Yup.string().required().email(),
                     password: Yup.string().required()
                 })}
-                onSubmit={(values,{setSubmitting}) => {
+                onSubmit={(values, {setSubmitting}) => {
                     dispatch(signInUser(values));
                     setSubmitting(false);
                     dispatch(closeModal());
                 }}
             >
-                {({isSubmitting, isValid, dirty})=>(
+                {({isSubmitting, isValid, dirty}) => (
                     <Form className={'ui form'}>
                         <MyTextInput name="email" placeholder={'Email Addresses'}/>
                         <MyTextInput name="password" placeholder={'password'} type={'password'}/>
@@ -35,9 +35,9 @@ const LogInForm = () => {
                             disabled={!isValid || !dirty || isSubmitting}
                             type={'submit'}
                             fluid
-                            size={'large'}
                             color={'teal'}
                             content={'Login'}/>
+
                     </Form>
                 )}
 

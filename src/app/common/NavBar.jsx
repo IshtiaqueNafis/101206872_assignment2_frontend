@@ -1,12 +1,17 @@
 import React from 'react';
-import {Button, Container, Menu} from "semantic-ui-react";
+import {Container, Menu} from "semantic-ui-react";
 import {NavLink} from "react-router-dom";
-import {useDispatch} from "react-redux";
-import {openModal} from "../../redux/modalSlice";
+import {useSelector} from "react-redux";
+import SignInMenu from "../auth/SignInMenu";
+import SignOutMenu from "../auth/SignOutMenu";
 
 
 const NavBar = () => {
-    const dispatch = useDispatch();
+    const {authenticated} = useSelector(state => state.auth);
+
+
+
+
     return (
         <Menu inverted fixed={'top'}>
             <Container>
@@ -14,12 +19,7 @@ const NavBar = () => {
                     <img src="/assets/logo.png" alt="logo" style={{marginRight: 15}}/>
                     Employee Management
                 </Menu.Item>
-
-                <Menu.Item>
-                    <Button onClick={()=>dispatch(openModal({modalType:'LogInForm'}))} content={'Log In'}/>
-
-                </Menu.Item>
-
+                {authenticated? <SignInMenu/>:<SignOutMenu/>   }
 
             </Container>
         </Menu>

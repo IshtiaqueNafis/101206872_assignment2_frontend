@@ -13,6 +13,7 @@ export const modalSlice = createSlice({
         },
         closeModal: (state) => {
             state = null
+            return state;
         }
     }
 })

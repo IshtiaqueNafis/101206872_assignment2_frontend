@@ -1,7 +1,6 @@
 export const data = [
     {
-        _id : "6fbbd7fc13ae6cd7000064"
-    ,
+        _id : "6fbbd7fc13ae6cd7000064",
         first_name: "Konstanze",
         last_name: "Jarman",
         email: "kjarman0@cocolog-nifty.com",
@@ -268,7 +267,6 @@ export const data = [
         _id: "619fbbd7fc13ae6cd700007c",
         first_name: "Meghan",
         last_name: "Shwenn",
-
         email: "mshwenno@sbwire.com",
         gender: "Agender",
         Phone: "103-727-8006",

@@ -1,14 +1,15 @@
 import React from 'react';
 import {useSelector} from "react-redux";
 import LogInForm from "../../auth/LogInForm";
+import DeleteModal from "../../auth/DeleteModal";
 
 const ModalManager = () => {
     const modalLookUP = {
-        LogInForm
+        LogInForm,
+        DeleteModal
     };
 
     const currentModal = useSelector(state => state.modal)
-console.log(currentModal)
     let renderedModal;
 
     if (currentModal) {
