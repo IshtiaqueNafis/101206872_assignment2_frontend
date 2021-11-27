@@ -12,7 +12,7 @@ export const asyncSliceReducer = createSlice({
         asyncActionStart: (state) => {
             state.loading = true;
             state.error = null;
-            return state;
+
         },
         asyncActionFinish: (state) => {
             state.loading = false;

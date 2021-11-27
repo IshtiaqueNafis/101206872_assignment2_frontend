@@ -1,5 +1,4 @@
 import {configureStore} from '@reduxjs/toolkit'
-import thunk from 'redux-thunk';
 import counterReducer from "./counterSlice";
 import employeeReducer from "./employeeSlice";
 import modalReducer from "./modalSlice";
@@ -15,5 +14,6 @@ export const store = configureStore({
         async: asyncReducer
 
     },
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(thunk)
+
 })
+

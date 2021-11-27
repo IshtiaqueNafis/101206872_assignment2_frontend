@@ -1,20 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import MaterialTable from "@material-table/core";
 import {columns} from "./employeeUtlis/employeeColumns";
 import {Link} from "react-router-dom";
 import {Icon} from "semantic-ui-react";
 import {openModal} from "../../redux/modalSlice";
+import {loadEmployees} from "../../redux/employeeSlice";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const EmployeeTable = () => {
 
 
-    const {employees} = useSelector(state => state.employee);
     const dispatch = useDispatch();
     const {authenticated} = useSelector(state => state.auth);
+    const {status} = useSelector(state => state.employee);
+    const {loading} = useSelector(state => state.async);
 
 
-    if (authenticated) return (
+    useEffect(() => {
+        dispatch(loadEmployees())
+    }, [])
+    const {employees} = useSelector(state => state.employee);
+
+    if (loading) return <LoadingComponent/>
+
+
+    return (
         <div>
             <MaterialTable
                 className={'test'}
@@ -40,9 +51,6 @@ const EmployeeTable = () => {
 
                         };
                     },
-
-
-
 
 
                     () => {
@@ -73,37 +81,6 @@ const EmployeeTable = () => {
     )
 
 
-    return (
-        <div>
-            <MaterialTable
-                className={'test'}
-                columns={columns}
-                data={employees}
-                title={'Employee Table'}
-                actions={[
-
-
-                        rowData => {
-                            return {
-                                icon: () => <Link to={`/detail/${rowData._id}`}><Icon color={'green'}
-                                                                                      name={'inbox'}/></Link>,
-                                tooltip: 'Info',
-                                onClick: rowData
-                            };
-                        },
-
-
-                ]
-
-
-                }
-                options={{
-                    actionsColumnIndex: -1
-                }}
-
-            />
-        </div>
-    );
 };
 
 export default EmployeeTable;

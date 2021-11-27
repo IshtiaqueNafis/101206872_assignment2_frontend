@@ -1,15 +1,38 @@
-import {createSlice} from '@reduxjs/toolkit'
+import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import {data} from "../services/fakeData";
+import {delay} from "../app/utlis/utlis";
+import {fetchSampleData} from "../services/mockAPI";
+import {asyncActionError, asyncActionFinish, asyncActionStart} from "./asyncSliceReducer";
 
 const initialState = {
-    employees: data
+    employees: [],
+    status: null,
+    error: null
+
 }
+export const loadEmployees = createAsyncThunk(
+    'employee/addEmployee',
+    async (params, {dispatch}) => {
+        dispatch(asyncActionStart());
+        try {
+            await delay(100);
+            const result = await fetchSampleData();
+            dispatch(asyncActionFinish());
+            return result;
+        } catch (e) {
+            dispatch(asyncActionError(e));
+        }
+    }
+)
+
+
 export const employeeSlice = createSlice({
     name: 'employee',
     initialState,
     reducers: {
         loadData: state => {
             state.employees = [...data];
+
         },
         updateEmployee: (state, action) => {
             const {payload} = action;
@@ -25,6 +48,14 @@ export const employeeSlice = createSlice({
             return state
 
         }
+    },
+    extraReducers: {
+
+        [loadEmployees.fulfilled]: (state, action) => {
+            state.employees = action.payload;
+
+        },
+
     }
 
 

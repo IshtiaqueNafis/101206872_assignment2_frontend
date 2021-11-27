@@ -1,7 +1,8 @@
 import HomePage from "./app/HomePage";
 import {Route, useLocation} from "react-router-dom";
-import NavBar from "./app/common/NavBar";
+import {ToastContainer} from "react-toastify";
 import {Container} from "semantic-ui-react";
+import NavBar from "./app/common/NavBar";
 import EmployeeTable from "./features/employess/EmployeeTable";
 import ModalManager from "./app/common/modal/ModalManager";
 import EmployeeDetail from "./features/employess/employeeDetails/EmployeeDetail";
@@ -14,6 +15,7 @@ const App = () => {
 
         <>
             <ModalManager/>
+            <ToastContainer position={'bottom-right'} hideProgressBar theme={'colored'}/>
             <Route exact path={'/'} component={HomePage}/>
             <Route path={'/(.+)'} render={() => (
                 <>
