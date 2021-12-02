@@ -5,22 +5,27 @@ import {columns} from "./employeeUtlis/employeeColumns";
 import {Link} from "react-router-dom";
 import {Icon} from "semantic-ui-react";
 import {openModal} from "../../redux/modalSlice";
-import {loadEmployees} from "../../redux/employeeSlice";
+import {loadEmployees} from "../../redux/employeeSliceReducer";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const EmployeeTable = () => {
 
 
     const dispatch = useDispatch();
-    const {authenticated} = useSelector(state => state.auth);
-    const {status} = useSelector(state => state.employee);
     const {loading} = useSelector(state => state.async);
+
+    const {employees, count} = useSelector(state => state.employee);
+
 
 
     useEffect(() => {
-        dispatch(loadEmployees())
-    }, [])
-    const {employees} = useSelector(state => state.employee);
+        async function FetchData() {
+            await dispatch(loadEmployees());
+        }
+
+        FetchData()
+    },[])
+
 
     if (loading) return <LoadingComponent/>
 

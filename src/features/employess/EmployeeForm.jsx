@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Button, Header, Segment} from "semantic-ui-react";
-import {addEmployee, updateEmployee} from "../../redux/employeeSlice";
+import {addEmployee, getSingleEmployee, updateEmployee} from "../../redux/employeeSliceReducer";
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import MyTextInput from "../../app/forms/FormComponents/MyTextInput";
@@ -10,8 +10,14 @@ import {departmentData, genderData} from "../../services/departmentData";
 import {Link} from "react-router-dom";
 
 const EmployeeForm = ({match, history}) => {
-    const selectedEmployee = useSelector(state => state.employee.employees.find(e => e._id === match.params.id));
+    const {selectedEmployee} = useSelector(state => state.employee);
+    const {loading} = useSelector(state => state.async);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(getSingleEmployee({id: match.params.id}));
+    }, [dispatch])
+
     const initalValues = selectedEmployee ?? {
         first_name: '',
         last_name: '',
@@ -41,13 +47,17 @@ const EmployeeForm = ({match, history}) => {
             <Formik
                 initialValues={initalValues}
                 validationSchema={validationSchema}
-                onSubmit={(values) => {
-                    selectedEmployee ? dispatch(updateEmployee({...selectedEmployee, ...values})) : dispatch(addEmployee({...values}))
+                onSubmit={async (values) => {
+
+                    selectedEmployee ?
+                        await dispatch(updateEmployee({...selectedEmployee, ...values})) :
+
+                        await dispatch(addEmployee({...values}));
                     history.push('/employees')
                 }
                 }>
 
-                {({isSubmitting,dirty,isValid})=>(
+                {({isSubmitting, dirty, isValid}) => (
                     <Form className={'ui form'}>
                         <Header sub color={'orange'} content={'Employee Details'}/>
                         <MyTextInput name={'first_name'} placeholder={'First Name'}/>
@@ -59,12 +69,12 @@ const EmployeeForm = ({match, history}) => {
                         <MySelectInput name={'department'} placeholder={'Department Name'} options={departmentData}/>
                         <br/>
                         <Button
-                        loading={isSubmitting}
-                        disabled={!isValid||!dirty||isSubmitting}
-                        type="submit"
-                        floated={'right'}
-                        positive
-                        content={selectedEmployee ?'Update Employee':'Add Employee'}
+                            loading={isSubmitting}
+                            disabled={!isValid || !dirty || isSubmitting}
+                            type="submit"
+                            floated={'right'}
+                            positive
+                            content={selectedEmployee ? 'Update Employee' : 'Add Employee'}
                         />
                         <Button
                             as={Link}
