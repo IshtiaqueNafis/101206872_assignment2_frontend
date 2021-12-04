@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import MaterialTable from "@material-table/core";
 import {columns} from "./employeeUtlis/employeeColumns";
@@ -9,30 +9,27 @@ import {loadEmployees} from "../../redux/employeeSliceReducer";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const EmployeeTable = () => {
-
-
+    const {employees} = useSelector(state => state.employee);
     const dispatch = useDispatch();
     const {loading} = useSelector(state => state.async);
 
-    const {employees, count} = useSelector(state => state.employee);
-
-
+    const initFetch = useCallback(() => {
+            dispatch(loadEmployees())
+        }, [dispatch]
+    )
 
     useEffect(() => {
-        async function FetchData() {
-            await dispatch(loadEmployees());
-        }
-
-        FetchData()
-    },[])
+        initFetch();
+    }, [initFetch]);
 
 
-    if (loading) return <LoadingComponent/>
+    if (loading ) return <LoadingComponent/>
 
 
     return (
         <div>
             <MaterialTable
+
                 className={'test'}
                 columns={columns}
                 data={employees}

@@ -1,22 +1,29 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Button, Header, Segment} from "semantic-ui-react";
-import {addEmployee, getSingleEmployee, updateEmployee} from "../../redux/employeeSliceReducer";
+
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
 import MyTextInput from "../../app/forms/FormComponents/MyTextInput";
 import MySelectInput from "../../app/forms/FormComponents/MySelectInput";
 import {departmentData, genderData} from "../../services/departmentData";
-import {Link} from "react-router-dom";
+import {Link, Redirect} from "react-router-dom";
+import {addEmployee, getSingleEmployee, updateEmployee} from "../../redux/employeeSliceReducer";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const EmployeeForm = ({match, history}) => {
     const {selectedEmployee} = useSelector(state => state.employee);
-    const {loading} = useSelector(state => state.async);
     const dispatch = useDispatch();
+    const {loading, error} = useSelector(state => state.async);
 
     useEffect(() => {
         dispatch(getSingleEmployee({id: match.params.id}));
-    }, [dispatch])
+    }, [match.params.id]);
+
+
+    if (loading || (!selectedEmployee && !error)) return <LoadingComponent/>
+    if (error) return <Redirect to={'/error'}/>
+
 
     const initalValues = selectedEmployee ?? {
         first_name: '',
@@ -41,18 +48,15 @@ const EmployeeForm = ({match, history}) => {
         address: Yup.string().required(),
     })
 
+
     return (
         <Segment clearing>
             <Header content={selectedEmployee ? 'Edit Employee Information' : 'Create new Employee'}/>
             <Formik
                 initialValues={initalValues}
                 validationSchema={validationSchema}
-                onSubmit={async (values) => {
-
-                    selectedEmployee ?
-                        await dispatch(updateEmployee({...selectedEmployee, ...values})) :
-
-                        await dispatch(addEmployee({...values}));
+                onSubmit={(values) => {
+                    selectedEmployee ? dispatch(updateEmployee({...selectedEmployee, ...values})) : dispatch(addEmployee({...values}))
                     history.push('/employees')
                 }
                 }>

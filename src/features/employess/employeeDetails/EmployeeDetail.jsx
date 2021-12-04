@@ -5,19 +5,26 @@ import {Grid} from "semantic-ui-react";
 import EmployeeHeader from "./EmployeeHeader";
 import EmployeeDetailedInfo from "./EmployeeDetailedInfo";
 import LoadingComponent from "../../../app/layout/LoadingComponent";
+import {Redirect} from "react-router-dom";
 
 
 const EmployeeDetail = ({match}) => {
 
     const {selectedEmployee} = useSelector(state => state.employee);
-    const {loading} = useSelector(state => state.async);
+
+
+    const {loading, error} = useSelector(state => state.async);
     const dispatch = useDispatch();
+
 
     useEffect(() => {
         dispatch(getSingleEmployee({id: match.params.id}));
     }, [dispatch, match.params.id])
 
-if(loading) return <LoadingComponent/>;
+
+    if (loading || (!selectedEmployee && !error)) return <LoadingComponent/>
+    if (error) return <Redirect to={'/error'}/>
+
 
     return (
 

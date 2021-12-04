@@ -1,25 +1,17 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
-import axios from "axios";
 import {asyncActionError, asyncActionFinish, asyncActionStart} from "./asyncSliceReducer";
+import EmployeeService from "../services/EmployeeService";
 
-const initialState = {
-    employees: [],
-    selectedEmployee: [],
-        count:0,
-    status: null,
-    error: null
-
-}
 
 //region ***get loadEmployees get all employees***
 export const loadEmployees = createAsyncThunk(
-    'employee/loaddata',
-    async (params, {dispatch}) => {
+    'employee/retrieveEmployees',
+    async (_, {dispatch}) => {
         dispatch(asyncActionStart());
         try {
-            const result = await axios.get('https://secure-gorge-84686.herokuapp.com/employees').then(response => response);
+            const res = await EmployeeService.getAllEmployee();
             dispatch(asyncActionFinish());
-            return result.data;
+            return res.data;
         } catch (e) {
             dispatch(asyncActionError(e));
         }
@@ -34,11 +26,9 @@ export const getSingleEmployee = createAsyncThunk(
 
         dispatch(asyncActionStart());
         try {
-            const getSingleEmployee = await axios.get(`https://secure-gorge-84686.herokuapp.com/employees/${id}`).then(response => response);
+            const res = await EmployeeService.getSingleEmployee(id);
             dispatch(asyncActionFinish());
-            const {data} = getSingleEmployee.data;
-
-            return data;
+            return res.data.data;
 
 
         } catch (error) {
@@ -51,28 +41,31 @@ export const getSingleEmployee = createAsyncThunk(
 
 export const deletingEmployee = createAsyncThunk(
     'employee/deleteEmployee',
-    async ({modalProps}, {dispatch}) => {
+    async ({modalProps: id}, {dispatch}) => {
 
         dispatch(asyncActionStart());
         try {
-            const deeleteEmployee = await axios.delete(`https://secure-gorge-84686.herokuapp.com/employees/${modalProps}`).then(response => response);
+
+            await EmployeeService.removeEmployee(id);
             dispatch(asyncActionFinish());
-            return deeleteEmployee;
+            return {id};
         } catch (e) {
             dispatch(asyncActionError(e));
         }
     }
 )
 export const addEmployee = createAsyncThunk(
-    'employee/AddEmployees',
+    'employee/AddEmployee',
     async ({...values}, {dispatch}) => {
 
         dispatch(asyncActionStart());
         try {
-            const employee = await axios.post(`https://secure-gorge-84686.herokuapp.com/employees`, {...values}).then(res => res.request(values));
-            const {data} = employee.data;
+
+            const res = await EmployeeService.createEmployee(values)
             dispatch(asyncActionFinish());
-            return data;
+            return res.data.data;
+
+
         } catch (e) {
             dispatch(asyncActionError(e));
         }
@@ -81,14 +74,14 @@ export const addEmployee = createAsyncThunk(
 
 export const updateEmployee = createAsyncThunk(
     'employee/EditEmployees',
-    async ({ ...values}, {dispatch}) => {
-        const {_id} = values;
+    async ({id, ...values}, {dispatch}) => {
+        dispatch(asyncActionStart());
         try {
-            const employee = await axios.put(`https://secure-gorge-84686.herokuapp.com/employees/${_id}`, {...values}).then(res => res.request(values));
-            const {data} = employee.data;
+            const res = await EmployeeService.updateEmployee(id, values);
             dispatch(asyncActionFinish());
-            return data;
-        }catch (e) {
+            return res.data.data;
+
+        } catch (e) {
             dispatch(asyncActionError(e));
         }
     }
@@ -97,31 +90,42 @@ export const updateEmployee = createAsyncThunk(
 
 export const employeeSliceReducer = createSlice({
     name: 'employee',
-    initialState,
+    initialState: {
+        employees: [],
+        selectedEmployee: null
+
+    },
+    reducers: {},
 
     extraReducers: {
-
-        [loadEmployees.fulfilled]: (state, action) => {
-            state.count = action.payload.count;
-
-            state.employees = action.payload.data;
+        [loadEmployees.fulfilled]: (state, {payload}) => {
+            const {data} = payload
+            state.employees.push(...data);
         },
-        [getSingleEmployee.fulfilled]: (state, action) => {
-            state.selectedEmployee = action.payload;
+        [deletingEmployee.fulfilled]: (state, {payload}) => {
+            let index = state.employees.findIndex(employee => employee._id === payload.id);
+            state.employees.splice(index, 1);
+        },
+        [addEmployee.fulfilled]: (state, {payload}) => {
+            state.employees.push(payload);
+        },
+        [updateEmployee.fulfilled]: (state, {payload}) => {
+            console.log(payload);
+            const index = state.employees.findIndex(employee => employee._id === payload._id);
 
+            // state.employees[index] = {
+            //     ...state[index],
+            //     ...payload
+            // };
         },
-        [deletingEmployee.fulfilled]: (state, action) => {
-            console.log(action.payload);
-        },
-        [addEmployee.fulfilled]: (state, action) => {
-            console.log(action.payload);
+        [getSingleEmployee.fulfilled]: (state, {payload}) => {
+            state.selectedEmployee = payload
         }
-
 
     }
 
 
-})
+});
 
 
 export default employeeSliceReducer.reducer;
