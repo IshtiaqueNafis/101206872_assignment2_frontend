@@ -1,8 +1,7 @@
 import React from 'react';
-import {Dropdown, Image, Menu} from "semantic-ui-react";
+import {Button, Dropdown, Image, Menu} from "semantic-ui-react";
 import {Link, useHistory} from "react-router-dom";
 import {useDispatch, useSelector} from "react-redux";
-import {signOutUser} from "../../redux/authSliceReducer";
 
 const SignInMenu = () => {
     const dispatch = useDispatch();
@@ -15,10 +14,7 @@ const SignInMenu = () => {
             <Image avatar spaced={'right'} src={'/assets/user.png'}></Image>
             <Dropdown pointing={'top left'} text={currentUser.email}>
                 <Dropdown.Menu>
-                    <Dropdown.Item onClick={() => {
-                        dispatch(signOutUser())
-                        history.push('/employees');
-                    }} text="Sign Out" icon={'power'}/>
+                    <Button as={Link} to={'/create'} content={'Create'} basic inverted/>
                 </Dropdown.Menu>
             </Dropdown>
         </Menu.Item>

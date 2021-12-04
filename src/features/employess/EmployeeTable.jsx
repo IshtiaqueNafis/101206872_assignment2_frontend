@@ -1,11 +1,11 @@
 import React, {useCallback, useEffect} from 'react';
-import {useDispatch, useSelector} from "react-redux";
 import MaterialTable from "@material-table/core";
 import {columns} from "./employeeUtlis/employeeColumns";
-import {Link} from "react-router-dom";
 import {Icon} from "semantic-ui-react";
-import {openModal} from "../../redux/modalSlice";
 import {loadEmployees} from "../../redux/employeeSliceReducer";
+import {Link} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {openModal} from "../../redux/modalSlice";
 import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const EmployeeTable = () => {
@@ -19,7 +19,7 @@ const EmployeeTable = () => {
     )
 
     useEffect(() => {
-        initFetch();
+        dispatch(loadEmployees())
     }, [initFetch]);
 
 

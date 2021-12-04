@@ -1,12 +1,11 @@
 import React from 'react';
 import {useDispatch, useSelector} from "react-redux";
-import ModalWrapper from "../common/modal/ModalWrapper";
 import {Button, Modal} from "semantic-ui-react";
-
-import {closeModal} from "../../redux/modalSlice";
 import {toast} from "react-toastify";
 import {deletingEmployee} from "../../redux/employeeSliceReducer";
 import {useHistory} from "react-router-dom";
+import ModalWrapper from "../common/modal/ModalWrapper";
+import {closeModal} from "../../redux/modalSlice";
 
 const DeleteModal = () => {
     const dispatch = useDispatch();
@@ -26,7 +25,6 @@ const DeleteModal = () => {
                         history.push('/employees');
                         dispatch(closeModal());
                         toast.success('user deleted successfully');
-
 
 
                     } catch (e) {

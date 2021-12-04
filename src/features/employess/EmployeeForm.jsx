@@ -1,15 +1,15 @@
 import React, {useEffect} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {Button, Header, Segment} from "semantic-ui-react";
-
 import {Form, Formik} from 'formik';
 import * as Yup from 'yup';
+import {Link} from "react-router-dom";
+import {departmentData, genderData} from "../../services/departmentData";
+import {addEmployee, getSingleEmployee, updateEmployee} from "../../redux/employeeSliceReducer";
+import {toast} from "react-toastify";
+import LoadingComponent from "../../app/layout/LoadingComponent";
 import MyTextInput from "../../app/forms/FormComponents/MyTextInput";
 import MySelectInput from "../../app/forms/FormComponents/MySelectInput";
-import {departmentData, genderData} from "../../services/departmentData";
-import {Link, Redirect} from "react-router-dom";
-import {addEmployee, getSingleEmployee, updateEmployee} from "../../redux/employeeSliceReducer";
-import LoadingComponent from "../../app/layout/LoadingComponent";
 
 const EmployeeForm = ({match, history}) => {
     const {selectedEmployee} = useSelector(state => state.employee);
@@ -19,10 +19,6 @@ const EmployeeForm = ({match, history}) => {
     useEffect(() => {
         dispatch(getSingleEmployee({id: match.params.id}));
     }, [match.params.id]);
-
-
-    if (loading || (!selectedEmployee && !error)) return <LoadingComponent/>
-    if (error) return <Redirect to={'/error'}/>
 
 
     const initalValues = selectedEmployee ?? {
@@ -48,6 +44,7 @@ const EmployeeForm = ({match, history}) => {
         address: Yup.string().required(),
     })
 
+    if (loading || (!selectedEmployee && !error)) return <LoadingComponent/>
 
     return (
         <Segment clearing>
@@ -57,6 +54,8 @@ const EmployeeForm = ({match, history}) => {
                 validationSchema={validationSchema}
                 onSubmit={(values) => {
                     selectedEmployee ? dispatch(updateEmployee({...selectedEmployee, ...values})) : dispatch(addEmployee({...values}))
+                    toast.success(selectedEmployee ? "Employee Updated" : "Added Employee");
+
                     history.push('/employees')
                 }
                 }>

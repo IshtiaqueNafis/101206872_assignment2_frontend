@@ -1,15 +1,10 @@
 import React from 'react';
-import {Container, Menu} from "semantic-ui-react";
-import {NavLink} from "react-router-dom";
-import {useSelector} from "react-redux";
-import SignInMenu from "../auth/SignInMenu";
-import SignOutMenu from "../auth/SignOutMenu";
+import {Button, Container, Menu} from "semantic-ui-react";
+import {Link, NavLink} from "react-router-dom";
+
 
 
 const NavBar = () => {
-    const {authenticated} = useSelector(state => state.auth);
-
-
 
 
     return (
@@ -19,7 +14,9 @@ const NavBar = () => {
                     <img src="/assets/logo.png" alt="logo" style={{marginRight: 15}}/>
                     Employee Management
                 </Menu.Item>
-                {authenticated? <SignInMenu/>:<SignOutMenu/>   }
+                <Menu.Item position={'right'}>
+                    <Button as={Link} to={'/create'} content={'Create Employee'} basic inverted/>
+                </Menu.Item>
 
             </Container>
         </Menu>

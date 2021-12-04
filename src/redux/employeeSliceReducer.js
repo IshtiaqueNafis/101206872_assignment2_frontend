@@ -11,7 +11,7 @@ export const loadEmployees = createAsyncThunk(
         try {
             const res = await EmployeeService.getAllEmployee();
             dispatch(asyncActionFinish());
-            return res.data;
+            return res.data.data;
         } catch (e) {
             dispatch(asyncActionError(e));
         }
@@ -74,7 +74,9 @@ export const addEmployee = createAsyncThunk(
 
 export const updateEmployee = createAsyncThunk(
     'employee/EditEmployees',
-    async ({id, ...values}, {dispatch}) => {
+    async ({...values}, {dispatch}) => {
+        const {_id: id} = values;
+        console.log(id);
         dispatch(asyncActionStart());
         try {
             const res = await EmployeeService.updateEmployee(id, values);
@@ -99,8 +101,8 @@ export const employeeSliceReducer = createSlice({
 
     extraReducers: {
         [loadEmployees.fulfilled]: (state, {payload}) => {
-            const {data} = payload
-            state.employees.push(...data);
+            state.employees = [];
+            state.employees.push(...payload);
         },
         [deletingEmployee.fulfilled]: (state, {payload}) => {
             let index = state.employees.findIndex(employee => employee._id === payload.id);
@@ -110,13 +112,13 @@ export const employeeSliceReducer = createSlice({
             state.employees.push(payload);
         },
         [updateEmployee.fulfilled]: (state, {payload}) => {
-            console.log(payload);
+
             const index = state.employees.findIndex(employee => employee._id === payload._id);
 
-            // state.employees[index] = {
-            //     ...state[index],
-            //     ...payload
-            // };
+            state.employees[index] = {
+
+                ...payload
+            };
         },
         [getSingleEmployee.fulfilled]: (state, {payload}) => {
             state.selectedEmployee = payload
